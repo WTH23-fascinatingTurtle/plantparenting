@@ -39,8 +39,8 @@ export default function Dashboard({ plantKey }) {
           datasets: [{
             fill: false,
             lineTension: 0,
-            backgroundColor: "rgba(0,0,255,1.0)",
-            borderColor: "rgba(0,0,255,0.1)",
+            backgroundColor: "rgba(231, 213, 203,1.0)",
+            borderColor: "rgba(231, 213, 203,0.1)",
             data: graphHumid
           }]
         },
@@ -58,8 +58,8 @@ export default function Dashboard({ plantKey }) {
           datasets: [{
             fill: false,
             lineTension: 0,
-            backgroundColor: "rgba(0,0,255,1.0)",
-            borderColor: "rgba(0,0,255,0.1)",
+            backgroundColor: "rgba(231, 213, 203,1.0)",
+            borderColor: "rgba(231, 213, 203,0.1)",
             data: graphTemp
           }]
         },
@@ -72,14 +72,13 @@ export default function Dashboard({ plantKey }) {
       }
 
     let moist = {
-        type: "line",
         data: {
           labels: graphTime,
           datasets: [{
             fill: false,
             lineTension: 0,
-            backgroundColor: "rgba(0,0,255,1.0)",
-            borderColor: "rgba(0,0,255,0.1)",
+            backgroundColor: "rgba(231, 213, 203,1.0)",
+            borderColor: "rgba(231, 213, 203,0.1)",
             data: graphMoist
           }]
         },
@@ -97,8 +96,8 @@ export default function Dashboard({ plantKey }) {
           datasets: [{
             fill: false,
             lineTension: 0,
-            backgroundColor: "rgba(0,0,255,1.0)",
-            borderColor: "rgba(0,0,255,0.1)",
+            backgroundColor: "rgba(231, 213, 203,1.0)",
+            borderColor: "rgba(231, 213, 203,0.1)",
             data: graphLight
           }]
         },
@@ -222,27 +221,39 @@ export default function Dashboard({ plantKey }) {
             modifiedData = data
         }
 
+         // Reset data
+        setGraphTime([])
+        setGraphTemp([])
+        setGraphHumid([])
+        setGraphMoist([])
+        setGraphLight([])
+    
+        let gTime = []
+        let gTemp = []
+        let gHumid = []
+        let gMoist = []
+        let gLight = []
         for (let i = 0; i < modifiedData.length; i++) {
             // [timestamp, temp, humidity, moisture, pH, light]
 
-            // Reset data
-            setGraphTime([])
-            setGraphTemp([])
-            setGraphHumid([])
-            setGraphMoist([])
-            setGraphLight([])
-
             // Set the Data
-            setGraphTime(int(modifiedData[i][0]))
-            setGraphTemp(int(modifiedData[i][1]))
-            setGraphHumid(int(modifiedData[i][2]))
-            setGraphMoist(int(modifiedData[i][3]))
-            setGraphLight(int(modifiedData[i][5]))
+            gTime.push(modifiedData[i][0].split(" ")[4])
+            gTemp.push(modifiedData[i][1])
+            gHumid.push(modifiedData[i][2])
+            gMoist.push(modifiedData[i][3])
+            gLight.push(modifiedData[i][4])
         }
+        setGraphTime(gTime)
+        setGraphTemp(gTemp)
+        setGraphHumid(gHumid)
+        setGraphMoist(gMoist)
+        setGraphLight(gLight)
+        console.log(graphTime)
+        console.log(graphTemp)
     }
 
     return (
-        <div className={`h-full w-full absolute ${inter.className} bg-backgroundred`}>
+        <main className={`${inter.className} bg-backgroundred`}>
             <Head>
                 <link rel="stylesheet" href="/styles.css" />
             </Head>
@@ -311,19 +322,8 @@ export default function Dashboard({ plantKey }) {
                         <Line options={moist.options} data={moist.data} />
                     </div>
                 </div>
-                <Link href = '/'>
-                    <h2>Home</h2>
-                </Link>
-
-                <Link href = '/settings'>
-                    <h2>Settings</h2>
-                </Link>
-
-                <Link href = '/dashboard'>
-                    <h2>Dashboard</h2>
-        </Link>
             </div>
-        </div>
+        </main>
     )
 }
 

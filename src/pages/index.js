@@ -2,7 +2,6 @@ import { Inter } from 'next/font/google'
 import { useState } from 'react'
 import { useRouter } from 'next/router'
 import axios from 'axios'
-import Link from 'next/link'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -56,18 +55,6 @@ export default function Home() {
         <div classname="">
           <h2 className="mt-8 text-white rounded-lg bg-red-400 border-2 border-red-800 p-2">{errorMsg}</h2>
         </div> : <></>}
-
-        <Link href = '/'>
-            <h2>Home</h2>
-        </Link>
-
-        <Link href = '/settings'>
-            <h2>Settings</h2>
-        </Link>
-
-        <Link href = '/dashboard'>
-            <h2>Dashboard</h2>
-        </Link>
       </div>
     </main>
   )
