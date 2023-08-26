@@ -3,27 +3,120 @@ import axios from "axios"
 import Head from 'next/head';
 import { useEffect, useState } from "react"
 import ToastMessage from "@/components/ToastMessage";
+import Chart from 'chart.js/auto';
+import { Line } from "react-chartjs-2";
 
 const inter = Inter({ subsets: ['latin'] })
 
-
-
 export default function Dashboard({ plantKey }) {
-    const [ plant, setPlant ] = useState({})
+    const [ plant, setPlant ] = useState({
+        "name": "",
+        "species": "",
+        "hash": "",
+        "realtime": [],
+        "controls": {
+            "light": false,
+            "waterVol": 0
+        }
+    })
     const [ plantStatus, setPlantStatus ] = useState(['Hello this is a status test 0', 'Hello this is a status test 1', 'Hello this is a status test 2', 'Hello this is a status test 3', 'Hello this is a status test 4'])
     const [ toastMessage, setToastMessage ] = useState("")
 
     // Custom Control Variables
     const [ waterVol, setWaterVol ] = useState(0)
-    const [ toggleLight, setToggleLight ] = useState(false)
+
+    // Data for Graph
+    const [ graphTime, setGraphTime ] = useState([])
+    const [ graphTemp, setGraphTemp ] = useState([])
+    const [ graphHumid, setGraphHumid ] = useState([])
+    const [ graphMoist, setGraphMoist ] = useState([])
+    const [ graphLight, setGraphLight ] = useState([])
+
+    let humid = {
+        data: {
+          labels: graphTime,
+          datasets: [{
+            fill: false,
+            lineTension: 0,
+            backgroundColor: "rgba(0,0,255,1.0)",
+            borderColor: "rgba(0,0,255,0.1)",
+            data: graphHumid
+          }]
+        },
+        options: {
+          legend: {display: false},
+          scales: {
+            yAxes: [{ticks: {min: (Math.min(...graphHumid)-500), max: (Math.max(...graphHumid)+500)}}],
+          }
+        }
+      }
+    
+    let temp = {
+        data: {
+          labels: graphTime,
+          datasets: [{
+            fill: false,
+            lineTension: 0,
+            backgroundColor: "rgba(0,0,255,1.0)",
+            borderColor: "rgba(0,0,255,0.1)",
+            data: graphTemp
+          }]
+        },
+        options: {
+          legend: {display: false},
+          scales: {
+            yAxes: [{ticks: {min: (Math.min(...graphTemp)-5), max:(Math.max(...graphTemp)+5)}}],
+          }
+        }
+      }
+
+    let moist = {
+        type: "line",
+        data: {
+          labels: graphTime,
+          datasets: [{
+            fill: false,
+            lineTension: 0,
+            backgroundColor: "rgba(0,0,255,1.0)",
+            borderColor: "rgba(0,0,255,0.1)",
+            data: graphMoist
+          }]
+        },
+        options: {
+          legend: {display: false},
+          scales: {
+            yAxes: [{ticks: {min: (Math.min(...graphMoist)-500), max: (Math.max(...graphMoist)+500)}}],
+          }
+        }
+      }
+
+    let light = {
+        data: {
+          labels: graphTime,
+          datasets: [{
+            fill: false,
+            lineTension: 0,
+            backgroundColor: "rgba(0,0,255,1.0)",
+            borderColor: "rgba(0,0,255,0.1)",
+            data: graphLight
+          }]
+        },
+        options: {
+          legend: {display: false},
+          scales: {
+            yAxes: [{ticks: {min: (Math.min(...graphLight)-500), max: (Math.max(...graphLight)+500)}}],
+          }
+        }
+      }
 
     useEffect(() => {
         const getData = async (plantKey) => {
             try {
                 const response = await axios.get(`https://plantparenting-o6blkvgghq-an.a.run.app/api/plants?id=${plantKey}`)
-
+                
                 if (response.status === 200) {
                     setPlant(response.data.plants[0])
+                    prepareGraphData()
                 }
             } catch (err) {
                 console.error(err)
@@ -42,6 +135,9 @@ export default function Dashboard({ plantKey }) {
         }
 
         getData(plantKey)
+        // DEBUG: REMOVE LATER
+        plant.realtime = [['Sat Aug 26 2023 21:41:34 GMT+0800 (Singapore Standard Time)',29.6,2076,1078,1276],['Sat Aug 26 2023 21:41:44 GMT+0800 (Singapore Standard Time)',31.7,1780,974,2016],['Sat Aug 26 2023 21:41:54 GMT+0800 (Singapore Standard Time)',28.7,1543,1256,2176],['Sat Aug 26 2023 21:42:04 GMT+0800 (Singapore Standard Time)',29.6,2276,978,1576],['Sat Aug 26 2023 21:42:14 GMT+0800 (Singapore Standard Time)',32.7,1690,994,816],['Sat Aug 26 2023 21:42:24 GMT+0800 (Singapore Standard Time)',31.4,1770,674,2365]]
+        
         getPlantStatus()
 
         // TODO: Uncomment this later lol
@@ -113,6 +209,37 @@ export default function Dashboard({ plantKey }) {
         setToastMessage(data)
     }
 
+    // Prepare data for graph
+    const prepareGraphData = () => {
+        const data = plant.realtime
+        let modifiedData = []
+
+        // If the data is more than length 50 (5min max), get the last 5 mins only
+        if (data.length > 50) {
+            modifiedData = data.slice(-50)
+        } else {
+            modifiedData = data
+        }
+
+        for (let i = 0; i < modifiedData.length; i++) {
+            // [timestamp, temp, humidity, moisture, pH, light]
+
+            // Reset data
+            setGraphTime([])
+            setGraphTemp([])
+            setGraphHumid([])
+            setGraphMoist([])
+            setGraphLight([])
+
+            // Set the Data
+            setGraphTime(int(modifiedData[i][0]))
+            setGraphTemp(int(modifiedData[i][1]))
+            setGraphHumid(int(modifiedData[i][2]))
+            setGraphMoist(int(modifiedData[i][3]))
+            setGraphLight(int(modifiedData[i][5]))
+        }
+    }
+
     return (
         <div className={`h-full w-full absolute ${inter.className} bg-backgroundred`}>
             <Head>
@@ -129,7 +256,7 @@ export default function Dashboard({ plantKey }) {
                     </div>
                 </div>
 
-                <div className="grid grid-rows-4 grid-flow-col gap-4">
+                <div className="grid grid-rows-6 grid-flow-col gap-4">
                     {/* Plant Information */}
                     <div className="row-span-2 bg-primary shadow-md rounded-lg p-3">
                         <h2 className="font-bold text-2xl pb-2">Plant Status</h2>
@@ -139,22 +266,22 @@ export default function Dashboard({ plantKey }) {
                     </div>
                     <div className="row-span-2 bg-primary shadow-md rounded-lg p-3">
                         <h2 className="font-bold text-2xl pb-2">Manual Controls</h2>
-                        <label class="relative inline-flex items-center mr-5 cursor-pointer pb-3">
-                            <input type="checkbox" value="" class="sr-only peer" onChange={submitLight} checked={plant.controls.light} />
-                            <div class="w-11 h-6 bg-gray-200 rounded-full peer dark:bg-gray-700 peer-focus:ring-4 peer-focus:ring-green-300 dark:peer-focus:ring-green-800 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600"></div>
-                            <span class="ml-3 text-base font-medium text-white ">Light</span>
+                        <label className="relative inline-flex items-center mr-5 cursor-pointer pb-3">
+                            <input type="checkbox" value="" className="sr-only peer" onChange={submitLight} checked={plant.controls.light} />
+                            <div className="w-11 h-6 bg-gray-200 rounded-full peer dark:bg-gray-700 peer-focus:ring-4 peer-focus:ring-green-300 dark:peer-focus:ring-green-800 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600"></div>
+                            <span className="ml-3 text-base font-medium text-white ">Light</span>
                         </label>
                         
-                        <div class="custom-number-input w-32">
-                            <label for="custom-input-number" class="w-full text-white text-base font-medium">Add Water (in ml)</label>
+                        <div className="custom-number-input w-32">
+                            <label for="custom-input-number" className="w-full text-white text-base font-medium">Add Water (in ml)</label>
                             <div className="grid grid-rows-1 grid-flow-col gap-4">
                                 <div class="flex flex-row h-10 w-full rounded-lg relative bg-transparent mt-1">
-                                    <button data-action="decrement" class=" bg-gray-300 text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-l cursor-pointer outline-none" onClick={decrementNum}>
-                                        <span class="m-auto text-2xl font-thin">−</span>
+                                    <button data-action="decrement" className=" bg-gray-300 text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-l cursor-pointer outline-none" onClick={decrementNum}>
+                                        <span className="m-auto text-2xl font-thin">−</span>
                                     </button>
-                                    <input type="number" class="outline-none focus:outline-none text-center w-full bg-gray-300 font-semibold text-md hover:text-black focus:text-black md:text-basecursor-default flex items-center text-gray-700 outline-none" name="custom-input-number" value={waterVol} onChange={(e) => {setWaterVol(int(e.target.value))}}></input>
-                                    <button data-action="increment" class="bg-gray-300 text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-r cursor-pointer" onClick={incrementNum}>
-                                        <span class="m-auto text-2xl font-thin">+</span>
+                                    <input type="number" className="outline-none focus:outline-none text-center w-full bg-gray-300 font-semibold text-md hover:text-black focus:text-black md:text-basecursor-default flex items-center text-gray-700 outline-none" name="custom-input-number" value={waterVol} onChange={(e) => {setWaterVol(int(e.target.value))}}></input>
+                                    <button data-action="increment" className="bg-gray-300 text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-r cursor-pointer" onClick={incrementNum}>
+                                        <span className="m-auto text-2xl font-thin">+</span>
                                     </button>
                                 </div>
                                 <div className="row-span-2 mt-1">
@@ -168,11 +295,19 @@ export default function Dashboard({ plantKey }) {
                     </div>
 
                     {/* Graphs */}
-                    <div className="row-span-2 col-span-2 bg-primary shadow-md rounded-lg">
+                    <div className="row-span-2 col-span-2 bg-primary shadow-md rounded-lg max-w-xl p-2">
+                        <Line options={temp.options} data={temp.data} />
+                    </div>
+                    <div className="row-span-2 col-span-2 bg-primary shadow-md rounded-lg max-w-xl p-2">
+                        <Line options={humid.options} data={humid.data} />
 
                     </div>
-                    <div className="row-span-2 col-span-2 bg-primary shadow-md rounded-lg">
+                    <div className="row-span-2 col-span-2 bg-primary shadow-md rounded-lg max-w-xl p-2">
+                        <Line options={light.options} data={light.data} />
 
+                    </div>
+                    <div className="row-span-2 col-span-2 bg-primary shadow-md rounded-lg max-w-xl p-2">
+                        <Line options={moist.options} data={moist.data} />
                     </div>
                 </div>
             </div>
