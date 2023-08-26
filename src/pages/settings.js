@@ -34,28 +34,16 @@ export default function Home() {
       className={`absolute flex h-full w-full ${inter.className} bg-backgroundred`}
     >
       <div className="h-full w-full flex-grow p-10">
-        <h1 className="text-title font-extrabold text-5xl mb-10">Find My Plant</h1>
-        <form onSubmit={(e) => handleSubmit(e)}>
-          <input
-            type="text"
-            name="key"
-            id="key"
-            placeholder="Enter your plant key"
-            className=" mb-5 flex h-20 w-1/3 flex-shrink-0 bg-primary rounded-md px-2 shadow-xl text-whiteh placeholder-primarytext focus:outline-none"
-            value={plantKey}
-            onChange={(e) => setPlantKey(e.target.value)}
-          />
-          <input
-              type="submit"
-              value="Next >"
-              className="flex-shrink-0 rounded-md bg-secondary px-5 py-3 font-bold text-white duration-75 hover:cursor-pointer focus:outline-none active:scale-95 shadow"
-            />
-        </form>
+        <h1 className="text-title font-extrabold text-5xl mb-10">Settings - PlantName</h1>
         
-        {errorMsg !== "" ? 
-        <div classname="">
-          <h2 className="mt-8 text-white rounded-lg bg-red-400 border-2 border-red-800 p-2">{errorMsg}</h2>
-        </div> : <></>}
+        <h3 class="mb-5 text-3xl font-medium leading-tight text-primary flex items-left justify-left">Unique Key: aJk8nmp3</h3>
+        <h3 class="mb-5 text-3xl font-medium leading-tight text-primary flex items-left justify-left">Plant Name: PlantName</h3>
+        <h3 class="mb-5 text-3xl font-medium leading-tight text-primary flex items-left justify-left">ph Visual Type:</h3>
+        <h3 class="mb-5 text-3xl font-medium leading-tight text-primary flex items-left justify-left">Light Intensity Visual Type: </h3>
+        <h3 class="mb-5 text-3xl font-medium leading-tight text-primary flex items-left justify-left">Moisture Visual Type:</h3>
+        <h3 class="mb-5 text-3xl font-medium leading-tight text-primary flex items-left justify-left">Humidity Visual Type:</h3>
+        <h3 class="mb-5 text-3xl font-medium leading-tight text-primary flex items-left justify-left">Temperature Type:</h3>
+        <h3 class="mb-5 text-3xl font-medium leading-tight text-primary flex items-left justify-left">Auto Water:</h3>
 
         <Link href = '/'>
             <h2>Home</h2>

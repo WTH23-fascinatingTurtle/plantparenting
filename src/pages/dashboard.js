@@ -5,6 +5,7 @@ import { useEffect, useState } from "react"
 import ToastMessage from "@/components/ToastMessage";
 import Chart from 'chart.js/auto';
 import { Line } from "react-chartjs-2";
+import Link from 'next/link'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -310,6 +311,17 @@ export default function Dashboard({ plantKey }) {
                         <Line options={moist.options} data={moist.data} />
                     </div>
                 </div>
+                <Link href = '/'>
+                    <h2>Home</h2>
+                </Link>
+
+                <Link href = '/settings'>
+                    <h2>Settings</h2>
+                </Link>
+
+                <Link href = '/dashboard'>
+                    <h2>Dashboard</h2>
+        </Link>
             </div>
         </div>
     )
