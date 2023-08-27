@@ -117,6 +117,7 @@ export default function Dashboard({ plantKey }) {
                 if (response.status === 200) {
                     setPlant(response.data.plants[0])
                     prepareGraphData()
+                    getPlantStatus()
                 }
             } catch (err) {
                 console.error(err)
@@ -136,19 +137,19 @@ export default function Dashboard({ plantKey }) {
 
         getData(plantKey)
         // DEBUG: REMOVE LATER
-        plant.realtime = [['Sat Aug 26 2023 21:41:34 GMT+0800 (Singapore Standard Time)',29.6,2076,1078,1276],['Sat Aug 26 2023 21:41:44 GMT+0800 (Singapore Standard Time)',31.7,1780,974,2016],['Sat Aug 26 2023 21:41:54 GMT+0800 (Singapore Standard Time)',28.7,1543,1256,2176],['Sat Aug 26 2023 21:42:04 GMT+0800 (Singapore Standard Time)',29.6,2276,978,1576],['Sat Aug 26 2023 21:42:14 GMT+0800 (Singapore Standard Time)',32.7,1690,994,816],['Sat Aug 26 2023 21:42:24 GMT+0800 (Singapore Standard Time)',31.4,1770,674,2365]]
+        // plant.realtime = [['Sat Aug 26 2023 21:41:34 GMT+0800 (Singapore Standard Time)',29.6,2076,1078,1276],['Sat Aug 26 2023 21:41:44 GMT+0800 (Singapore Standard Time)',31.7,1780,974,2016],['Sat Aug 26 2023 21:41:54 GMT+0800 (Singapore Standard Time)',28.7,1543,1256,2176],['Sat Aug 26 2023 21:42:04 GMT+0800 (Singapore Standard Time)',29.6,2276,978,1576],['Sat Aug 26 2023 21:42:14 GMT+0800 (Singapore Standard Time)',32.7,1690,994,816],['Sat Aug 26 2023 21:42:24 GMT+0800 (Singapore Standard Time)',31.4,1770,674,2365]]
         
         getPlantStatus()
 
         // TODO: Uncomment this later lol
 
-        // const interval = setInterval(() => {
-        //     getData(plantKey)
-        // }, 5000)
+        const interval = setInterval(() => {
+            getData(plantKey)
+        }, 5000)
 
-        // return () => {
-        //     clearInterval(interval);
-        // };
+        return () => {
+            clearInterval(interval);
+        };
     }, [])
 
     // Number Stepper Functions
@@ -258,7 +259,10 @@ export default function Dashboard({ plantKey }) {
             {toastMessage !== "" ? <ToastMessage message={toastMessage} sendToParent={dataFromToast}/> : <></>}
             <div className="p-10">
                 <div className="flex relative flex w-full flex-row pb-10">
-                    <h1 className="text-title font-extrabold text-5xl">{plant.name}</h1>
+                    <div>
+                        <h1 className="text-title font-extrabold text-5xl pb-1">{plant.name}</h1>
+                        <h2 className="text-secondary text-base">{plant.species}</h2>
+                    </div>
                     <div className="ml-auto space-x-3">
                         <Link href="/settings">
                             <button className="bg-secondary rounded-lg">
@@ -312,11 +316,9 @@ export default function Dashboard({ plantKey }) {
                     </div>
                     <div className="row-span-2 col-span-2 bg-primary shadow-md rounded-lg max-w-xl p-2">
                         <Line options={humid.options} data={humid.data} />
-
                     </div>
                     <div className="row-span-2 col-span-2 bg-primary shadow-md rounded-lg max-w-xl p-2">
                         <Line options={light.options} data={light.data} />
-
                     </div>
                     <div className="row-span-2 col-span-2 bg-primary shadow-md rounded-lg max-w-xl p-2">
                         <Line options={moist.options} data={moist.data} />
