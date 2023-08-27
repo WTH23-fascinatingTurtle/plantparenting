@@ -20,7 +20,7 @@ export default function Dashboard({ plantKey }) {
             "waterVol": 0
         }
     })
-    const [ plantStatus, setPlantStatus ] = useState(['Hello this is a status test 0', 'Hello this is a status test 1', 'Hello this is a status test 2', 'Hello this is a status test 3', 'Hello this is a status test 4'])
+    const [ plantStatus, setPlantStatus ] = useState(['Plant is running low on Water!', 'Acidity of soil is increasing abnormally', 'Hello this is a status test 2', 'Hello this is a status test 3', 'Hello this is a status test 4'])
     const [ toastMessage, setToastMessage ] = useState("")
 
     // Custom Control Variables
@@ -48,7 +48,8 @@ export default function Dashboard({ plantKey }) {
           title: {display: false, text: 'Humidity'},
           scales: {
             yAxes: [{ticks: {min: (Math.min(...graphHumid)-500), max: (Math.max(...graphHumid)+500)}}],
-          }
+          },
+          animation: false
         }
       }
       
@@ -66,8 +67,9 @@ export default function Dashboard({ plantKey }) {
         options: {
             title: {display: false, text: 'Humidity'},
             scales: {
-            yAxes: [{ticks: {min: (Math.min(...graphTemp)-5), max:(Math.max(...graphTemp)+5)}}],
-          }
+                yAxes: [{ticks: {min: (Math.min(...graphTemp)-5), max:(Math.max(...graphTemp)+5)}}],
+            },
+            animation: false
         }
       }
 
@@ -85,8 +87,9 @@ export default function Dashboard({ plantKey }) {
         options: {
             title: {display: false, text: 'Humidity'},
             scales: {
-            yAxes: [{ticks: {min: (Math.min(...graphMoist)-500), max: (Math.max(...graphMoist)+500)}}],
-          }
+                yAxes: [{ticks: {min: (Math.min(...graphMoist)-500), max: (Math.max(...graphMoist)+500)}}],
+            },
+            animation: false
         }
       }
 
@@ -104,8 +107,9 @@ export default function Dashboard({ plantKey }) {
         options: {
             title: {display: false, text: 'Humidity'},
             scales: {
-            yAxes: [{ticks: {min: (Math.min(...graphLight)-500), max: (Math.max(...graphLight)+500)}}],
-          }
+                yAxes: [{ticks: {min: (Math.min(...graphLight)-500), max: (Math.max(...graphLight)+500)}}],
+            },
+            animation: false
         }
       }
 
@@ -117,8 +121,9 @@ export default function Dashboard({ plantKey }) {
                 if (response.status === 200) {
                     setPlant(response.data.plants[0])
                     prepareGraphData()
-                    getPlantStatus()
+                    //getPlantStatus()
                 }
+                console.log(response.data)
             } catch (err) {
                 console.error(err)
             }
@@ -136,15 +141,13 @@ export default function Dashboard({ plantKey }) {
         }
 
         getData(plantKey)
-        // DEBUG: REMOVE LATER
-        // plant.realtime = [['Sat Aug 26 2023 21:41:34 GMT+0800 (Singapore Standard Time)',29.6,2076,1078,1276],['Sat Aug 26 2023 21:41:44 GMT+0800 (Singapore Standard Time)',31.7,1780,974,2016],['Sat Aug 26 2023 21:41:54 GMT+0800 (Singapore Standard Time)',28.7,1543,1256,2176],['Sat Aug 26 2023 21:42:04 GMT+0800 (Singapore Standard Time)',29.6,2276,978,1576],['Sat Aug 26 2023 21:42:14 GMT+0800 (Singapore Standard Time)',32.7,1690,994,816],['Sat Aug 26 2023 21:42:24 GMT+0800 (Singapore Standard Time)',31.4,1770,674,2365]]
-        
         getPlantStatus()
 
         // TODO: Uncomment this later lol
 
         const interval = setInterval(() => {
             getData(plantKey)
+            // plant.realtime = [['Sat Aug 26 2023 21:41:34 GMT+0800 (Singapore Standard Time)',29.6,2076,1078,1276],['Sat Aug 26 2023 21:41:44 GMT+0800 (Singapore Standard Time)',31.7,1780,974,2016],['Sat Aug 26 2023 21:41:54 GMT+0800 (Singapore Standard Time)',28.7,1543,1256,2176],['Sat Aug 26 2023 21:42:04 GMT+0800 (Singapore Standard Time)',29.6,2276,978,1576],['Sat Aug 26 2023 21:42:14 GMT+0800 (Singapore Standard Time)',32.7,1690,994,816],['Sat Aug 26 2023 21:42:24 GMT+0800 (Singapore Standard Time)',31.4,1770,674,2365]]
         }, 5000)
 
         return () => {
@@ -209,20 +212,23 @@ export default function Dashboard({ plantKey }) {
     const dataFromToast = (data) => {
         setToastMessage(data)
     }
+    
 
     // Prepare data for graph
+    useEffect(()=>{prepareGraphData()},[plant])
     const prepareGraphData = () => {
+        
         const data = plant.realtime
         let modifiedData = []
 
         // If the data is more than length 50 (5min max), get the last 5 mins only
         if (data.length > 50) {
-            modifiedData = data.slice(-50)
+            modifiedData = data.slice(50)
         } else {
             modifiedData = data
         }
 
-         // Reset data
+        // Reset data
         setGraphTime([])
         setGraphTemp([])
         setGraphHumid([])
@@ -238,7 +244,10 @@ export default function Dashboard({ plantKey }) {
             // [timestamp, temp, humidity, moisture, pH, light]
 
             // Set the Data
-            gTime.push(modifiedData[i][0].split(" ")[4])
+            const epochTime = modifiedData[i][0]
+            let date = new Date(0)
+            date.setUTCSeconds(epochTime)
+            gTime.push(String(date).split(" ")[4])
             gTemp.push(modifiedData[i][1])
             gHumid.push(modifiedData[i][2])
             gMoist.push(modifiedData[i][3])
@@ -252,7 +261,7 @@ export default function Dashboard({ plantKey }) {
     }
 
     return (
-        <main className={`${inter.className} bg-backgroundred`}>
+        <main className={`${inter.className} h-full absolute w-full bg-backgroundred`}>
             <Head>
                 <link rel="stylesheet" href="/styles.css" />
             </Head>
@@ -272,7 +281,7 @@ export default function Dashboard({ plantKey }) {
                     </div>
                 </div>
 
-                <div className="grid grid-rows-6 grid-flow-col gap-4">
+                <div className="grid grid-rows-4 grid-flow-col gap-4">
                     {/* Plant Information */}
                     <div className="row-span-2 bg-primary shadow-md rounded-lg p-3">
                         <h2 className="font-bold text-2xl pb-2">Plant Status</h2>
@@ -311,15 +320,15 @@ export default function Dashboard({ plantKey }) {
                     </div>
 
                     {/* Graphs */}
-                    <div className="row-span-2 col-span-2 bg-primary shadow-md rounded-lg max-w-xl p-2">
+                    {/* <div className="row-span-2 col-span-2 bg-primary shadow-md rounded-lg max-w-xl p-2">
                         <Line options={temp.options} data={temp.data} />
-                    </div>
+                    </div> */}
                     <div className="row-span-2 col-span-2 bg-primary shadow-md rounded-lg max-w-xl p-2">
                         <Line options={humid.options} data={humid.data} />
                     </div>
-                    <div className="row-span-2 col-span-2 bg-primary shadow-md rounded-lg max-w-xl p-2">
+                    {/* <div className="row-span-2 col-span-2 bg-primary shadow-md rounded-lg max-w-xl p-2">
                         <Line options={light.options} data={light.data} />
-                    </div>
+                    </div> */}
                     <div className="row-span-2 col-span-2 bg-primary shadow-md rounded-lg max-w-xl p-2">
                         <Line options={moist.options} data={moist.data} />
                     </div>
