@@ -248,8 +248,6 @@ export default function Dashboard({ plantKey }) {
         setGraphHumid(gHumid)
         setGraphMoist(gMoist)
         setGraphLight(gLight)
-        console.log(graphTime)
-        console.log(graphTemp)
     }
 
     return (
@@ -262,9 +260,11 @@ export default function Dashboard({ plantKey }) {
                 <div className="flex relative flex w-full flex-row pb-10">
                     <h1 className="text-title font-extrabold text-5xl">{plant.name}</h1>
                     <div className="ml-auto space-x-3">
-                        <button className="bg-secondary rounded-lg">
-                            <img src="/gear.png" alt="Settings" className="settings-icon p-2" />
-                        </button>
+                        <Link href="/settings">
+                            <button className="bg-secondary rounded-lg">
+                                <img src="/gear.png" alt="Settings" className="settings-icon p-2" />
+                            </button>
+                        </Link>
                     </div>
                 </div>
 
