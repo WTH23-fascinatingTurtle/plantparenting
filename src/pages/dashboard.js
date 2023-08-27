@@ -40,18 +40,18 @@ export default function Dashboard({ plantKey }) {
             fill: false,
             lineTension: 0,
             backgroundColor: "rgba(231, 213, 203,1.0)",
-            borderColor: "rgba(231, 213, 203,0.1)",
+            borderColor: "rgba(231, 213, 203,0.9)",
             data: graphHumid
           }]
         },
         options: {
-          legend: {display: false},
+          title: {display: false, text: 'Humidity'},
           scales: {
             yAxes: [{ticks: {min: (Math.min(...graphHumid)-500), max: (Math.max(...graphHumid)+500)}}],
           }
         }
       }
-    
+      
     let temp = {
         data: {
           labels: graphTime,
@@ -59,13 +59,13 @@ export default function Dashboard({ plantKey }) {
             fill: false,
             lineTension: 0,
             backgroundColor: "rgba(231, 213, 203,1.0)",
-            borderColor: "rgba(231, 213, 203,0.1)",
+            borderColor: "rgba(231, 213, 203,0.9)",
             data: graphTemp
           }]
         },
         options: {
-          legend: {display: false},
-          scales: {
+            title: {display: false, text: 'Humidity'},
+            scales: {
             yAxes: [{ticks: {min: (Math.min(...graphTemp)-5), max:(Math.max(...graphTemp)+5)}}],
           }
         }
@@ -78,13 +78,13 @@ export default function Dashboard({ plantKey }) {
             fill: false,
             lineTension: 0,
             backgroundColor: "rgba(231, 213, 203,1.0)",
-            borderColor: "rgba(231, 213, 203,0.1)",
+            borderColor: "rgba(231, 213, 203,0.9)",
             data: graphMoist
           }]
         },
         options: {
-          legend: {display: false},
-          scales: {
+            title: {display: false, text: 'Humidity'},
+            scales: {
             yAxes: [{ticks: {min: (Math.min(...graphMoist)-500), max: (Math.max(...graphMoist)+500)}}],
           }
         }
@@ -97,13 +97,13 @@ export default function Dashboard({ plantKey }) {
             fill: false,
             lineTension: 0,
             backgroundColor: "rgba(231, 213, 203,1.0)",
-            borderColor: "rgba(231, 213, 203,0.1)",
+            borderColor: "rgba(231, 213, 203,0.9)",
             data: graphLight
           }]
         },
         options: {
-          legend: {display: false},
-          scales: {
+            title: {display: false, text: 'Humidity'},
+            scales: {
             yAxes: [{ticks: {min: (Math.min(...graphLight)-500), max: (Math.max(...graphLight)+500)}}],
           }
         }
